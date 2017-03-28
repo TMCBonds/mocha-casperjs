@@ -118,12 +118,15 @@ module.exports = function (Mocha, casper, utils) {
 
             if (currentTest && casper.steps && casper.steps.length &&
                 casper.step < casper.steps.length && !casper.checker) {
+              // create wrapper to attempt at correcting "done() called multiple times" error
+              (function() {
               casper.run(function () {
                 casper.checker = null
                 if (!currentTest || !currentTest.state) {
                   done()
                 }
               })
+              })()
             } else if (fn.length === 0 && currentTest && !currentTest.state) {
               // If `fn` is synchronous (i.e. didn't have a `done` parameter and didn't return a promise),
               // call `done` now. (If it's callback-asynchronous, `fn` will call `done` eventually since
